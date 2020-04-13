@@ -15,7 +15,7 @@ jobs:
     steps:
       - name: Docschina Github Action
         id: docschinaDeploy
-        uses: lcxfs1991/docschina-actions@v0.0.4
+        uses: lcxfs1991/docschina-actions@v0.0.5
         with:
           secretId: ${{ secrets.SECRET_ID }}
           secretKey: ${{ secrets.SECRET_KEY }}
