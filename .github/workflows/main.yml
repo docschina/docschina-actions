@@ -14,6 +14,7 @@ jobs:
 
     steps:
       - name: Docschina Github Action
+        id: docschinaDeploy
         uses: lcxfs1991/docschina-actions@v0.0.3
         with:
           secretId: ${{ secrets.SECRET_ID }}
@@ -21,3 +22,7 @@ jobs:
           staticSrcPath: build
           bucket: ${{ secrets.BUCKET }}
           region: ${{ secrets.REGION }}
+
+      - name: Get Deployment Result
+        run: echo "Deploy to docschina result ${{ steps.docschinaDeploy.outputs.deployResult }}"
+
