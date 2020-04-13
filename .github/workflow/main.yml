@@ -1,0 +1,23 @@
+name: TEST CI
+
+on:
+  push:
+    branches: [master]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        node-version: [12.x]
+
+    steps:
+      - name: Docschina Github Action
+        uses: lcxfs1991/docschina-actions@v0.0.3
+        with:
+          secretId: ${{ secrets.SECRET_ID }}
+            secretKey: ${{ secrets.SECRET_KEY }}
+            staticSrcPath: build
+            bucket: ${{ secrets.BUCKET }}
+            region: ${{ secrets.REGION }}
