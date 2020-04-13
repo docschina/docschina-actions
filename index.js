@@ -208,6 +208,7 @@ const init = async () => {
         });
 
         // 开始上传文件
+        let incrementalFiles = [];
         try {
             let info = await Promise.all(uploadActions);
             
@@ -215,10 +216,12 @@ const init = async () => {
                 logTimeResult(`${item.Location}-${item.statusCode}`);
                         
                 let splitResult = item.Location.split('/');
-                assetJsonMap.map.push(splitResult.splice(1, splitResult.length - 1).join('/'))
+                let file = splitResult.splice(1, splitResult.length - 1).join('/');
+                assetJsonMap.map.push(file)
+                incrementalFiles.push(file);
             });     
             
-            core.setOutput('deployResult', JSON.stringify(assetJsonMap.map));
+            core.setOutput('deployResult', JSON.stringify(incrementalFiles));
         }
         catch (e) {
             core.error(e.message);
