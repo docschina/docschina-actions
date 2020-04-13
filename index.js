@@ -160,9 +160,9 @@ const init = async () => {
         core.debug(`codePath: ${codePath}`);
         //收集需要上传的文件，传入数组
         let globResult = await new Promise((resolve, reject) => {
-            glob('**/*', { cwd: codePath }, function (err, files) {
+            glob('**/**', { cwd: codePath }, function (err, files) {
                 if (err) {
-                    log.error(err);
+                    core.error(err.message);
                     reject(err);
                     return;
                 }
