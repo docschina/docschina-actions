@@ -2,8 +2,8 @@ name: "Docschina Github Action"
 description: "印记中文部署"
 author: lcxfs1991
 branding:
-  icon: upload-cloud
-  color: blue
+  icon: cloud
+  color: red
 inputs:
   secretId:
     description: "腾讯云 secretId"
