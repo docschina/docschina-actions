@@ -157,7 +157,7 @@ const init = async () => {
         }
 
         let codePath = staticSrcPath;
-        core.debug(`codePath: ${codePath}`)
+        core.debug(`codePath: ${codePath}`);
         //收集需要上传的文件，传入数组
         let globResult = await new Promise((resolve, reject) => {
             glob('**/*', { cwd: codePath }, function (err, files) {
@@ -170,7 +170,7 @@ const init = async () => {
                 resolve(files);
             });
         });
-        core.debug(`globResult: ${globResult}`)
+        core.debug(`globResult: ${globResult}`);
 
         // 忽略某些文件
         // globResult = skipFiles({}, globResult);
