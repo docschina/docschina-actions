@@ -156,7 +156,7 @@ const init = async () => {
             assetJsonMap.map = require(assetJsonFile).map;
         }
 
-        let codePath = staticSrcPath;
+        let codePath = path.join(__dirname, staticSrcPath);
         core.debug(`codePath: ${codePath}`);
         //收集需要上传的文件，传入数组
         let globResult = await new Promise((resolve, reject) => {
