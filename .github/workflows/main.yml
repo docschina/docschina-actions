@@ -22,6 +22,7 @@ jobs:
           staticSrcPath: ./build
           bucket: ${{ secrets.BUCKET }}
           region: ${{ secrets.REGION }}
+          isForce: ${{ secrets.ISFORCE }}
 
       - name: Get Deployment Result
         run: echo "Deploy to docschina result ${{ steps.docschinaDeploy.outputs.deployResult }}"
