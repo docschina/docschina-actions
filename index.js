@@ -6,16 +6,26 @@ const chalk = require('chalk');
 const core = require('@actions/core');
 const COS = require('cos-nodejs-sdk-v5');
 
-const config = require('./config/example');
+let secretId = core.getInput('secretId');
+let secretKey = core.getInput('secretKey');
+let envId = core.getInput('envId');
+let staticSrcPath = core.getInput('staticSrcPath');
+let staticDestPath = core.getInput('staticDestPath');
+let bucket = core.getInput('bucket');
+let region = core.getInput('region');
+let isForce = core.getInput('isForce') || false;
 
-const secretId = core.getInput('secretId') || config.secretId;
-const secretKey = core.getInput('secretKey') || config.secretKey;
-const envId = core.getInput('envId') || config.envId;
-const staticSrcPath = core.getInput('staticSrcPath') || config.staticSrcPath;
-const staticDestPath = core.getInput('staticDestPath') || config.staticDestPath;
-const bucket = core.getInput('bucket') || config.bucket
-const region = core.getInput('region') || config.region;
-const isForce = core.getInput('isForce') || false || config.isForce;
+if (!process.env.CI) {
+  const config = require('./config/index');
+  secretId = config.secretId;
+  secretKey = config.secretKey;
+  envId = config.envId;
+  staticSrcPath = config.staticSrcPath;
+  staticDestPath = config.staticDestPath;
+  bucket = config.bucket
+  region = config.region;
+  isForce = config.isForce;
+}
 
 const assetJsonFile = path.join(__dirname, './docschina-assets.json')
 
@@ -109,9 +119,9 @@ const logTimeResult = function (result, action = null) {
     }
   
     if (!color) {
-      console.log(msg);
+      core.debug(msg);
     } else {
-      console.log(chalk[color](msg));
+      core.debug(chalk[color](msg));
     }
 };
 
@@ -209,7 +219,7 @@ const init = async () => {
             core.setOutput('deployResult', JSON.stringify(assetJsonMap.map));
         }
         catch (e) {
-            console.log(e);
+            core.error(e.message);
             core.setOutput('deployResult', e.message)
             logTimeResult(`${e.Key}-${e.statusCode}-${e.Code}`, 'error');
         }
@@ -228,8 +238,8 @@ const init = async () => {
         }
     }
     catch (e) {
-        console.log(e);
-        core.setOutput('deployResult', e.message)
+      core.error(e.message);
+      core.setOutput('deployResult', e.message)
     }
 }
 
