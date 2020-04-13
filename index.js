@@ -204,10 +204,13 @@ const init = async () => {
                         
                 let splitResult = item.Location.split('/');
                 assetJsonMap.map.push(splitResult.splice(1, splitResult.length - 1).join('/'))
-            });            
+            });     
+            
+            core.setOutput('deployResult', JSON.stringify(assetJsonMap.map));
         }
         catch (e) {
             console.log(e);
+            core.setOutput('deployResult', e.message)
             logTimeResult(`${e.Key}-${e.statusCode}-${e.Code}`, 'error');
         }
 
@@ -226,6 +229,7 @@ const init = async () => {
     }
     catch (e) {
         console.log(e);
+        core.setOutput('deployResult', e.message)
     }
 }
 
