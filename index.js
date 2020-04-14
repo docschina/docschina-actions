@@ -14,6 +14,8 @@ let staticDestPath = core.getInput('staticDestPath');
 let bucket = core.getInput('bucket');
 let region = core.getInput('region');
 let isForce = core.getInput('isForce') || false;
+let skipFiles = core.getInput('skipFiles') || [];
+let assetFileName = core.getInput('assetFileName') || 'docschina-assets.json';
 
 if (!process.env.CI) {
   const config = require('./config/index');
@@ -27,7 +29,7 @@ if (!process.env.CI) {
   isForce = config.isForce;
 }
 
-const assetJsonFile = path.join(__dirname, './docschina-assets.json')
+const assetJsonFile = path.join(__dirname, assetFileName);
 
 const cos = new COS({
     SecretId: secretId,
@@ -39,7 +41,7 @@ const getObject = async () => {
         cos.getObject({
             Bucket: bucket, /* 必须 */
             Region: region,    /* 必须 */
-            Key: 'docschina-assets.json',              /* 必须 */
+            Key: assetFileName,              /* 必须 */
             Output: fs.createWriteStream(assetJsonFile),
         }, function(err, data) {
             // console.log(err || data);
@@ -54,30 +56,6 @@ const getObject = async () => {
     })
 }
 
-/**
- * 忽略部份文件的部署
- * @param {Object} projectData
- * @param {Array} filesParam
- */
-const skipFiles = function(projectData = {}, filesParam) {
-    let skip = projectData.skip || [];
-
-    if (!Array.isArray(skip)) {
-        return filesParam;
-    }
-
-    let files = filesParam.filter((item) => {
-        for (let i = 0, len = skip.length; i < len; i++) {
-        if (item.indexOf(skip[i]) === 0) {
-            return false;
-        }
-        }
-
-        return true;
-    });
-
-    return files;
-}
 /**
  * 将 html 文件放到最末尾上传
  * @param {Array} files 
@@ -156,29 +134,27 @@ const init = async () => {
             assetJsonMap.map = require(assetJsonFile).map;
         }
 
+        if (typeof skipFiles === 'string') {
+            skipFiles = JSON.parse(skipFiles);
+        }
+
         let codePath = path.join(__dirname, staticSrcPath);
         core.debug(`codePath: ${codePath}`);
+        
         //收集需要上传的文件，传入数组
-        let globResult = await new Promise((resolve, reject) => {
-            glob('**/**', { cwd: codePath }, function (err, files) {
-                if (err) {
-                    core.error(err.message);
-                    reject(err);
-                    return;
-                }
-
-                resolve(files);
-            });
-        });
-        core.debug(`globResult: ${globResult}`);
-
-        // 忽略某些文件
-        // globResult = skipFiles({}, globResult);
+        let scanFiles = glob.sync('**/**', { cwd: codePath });
+        
+        core.debug(`scanFiles for ${codePath}: ${scanFiles}`);
 
         // 剔除文件
-        let files = globResult.filter((file) => {
+        let filterFiles = scanFiles.filter((file) => {
             // 剔走已经上传的内容
             if (assetJsonMap.map.includes(file)) {
+                return false;
+            }
+
+            // 手动设置跳过的文件
+            if (skipFiles.includes(file)) {
                 return false;
             }
 
@@ -190,7 +166,7 @@ const init = async () => {
         });
 
         // 将 html 文件放到最后再上传
-        files = pushHtmlFiles(files);
+        let files = pushHtmlFiles(filterFiles);
 
         let uploadActions = [];
         files.forEach((file) => {
@@ -209,6 +185,7 @@ const init = async () => {
 
         // 开始上传文件
         let incrementalFiles = [];
+
         try {
             let info = await Promise.all(uploadActions);
             
@@ -217,7 +194,10 @@ const init = async () => {
                         
                 let splitResult = item.Location.split('/');
                 let file = splitResult.splice(1, splitResult.length - 1).join('/');
-                assetJsonMap.map.push(file)
+
+                if (file.indexOf('.html') < 0) {
+                    assetJsonMap.map.push(file);
+                }
                 incrementalFiles.push(file);
             });     
             
@@ -234,7 +214,7 @@ const init = async () => {
         await sliceUploadFile(cos, {
             Bucket: bucket,
             Region: region,
-            Key: 'docschina-assets.json',
+            Key: assetFileName,
             FilePath: assetJsonFile,
         })
 
