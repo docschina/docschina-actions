@@ -60,7 +60,7 @@ const getObject = async () => {
  * 将 html 文件放到最末尾上传
  * @param {Array} files 
  */
-const pushHtmlFiles = function(files) {
+const appendHtmlFiles = function(files) {
     let htmlFiles = [];
     let cdnFiles = [];
     files.forEach((item) => {
@@ -166,7 +166,7 @@ const init = async () => {
         });
 
         // 将 html 文件放到最后再上传
-        let files = pushHtmlFiles(filterFiles);
+        let files = appendHtmlFiles(filterFiles);
 
         let uploadActions = [];
         files.forEach((file) => {
@@ -195,7 +195,7 @@ const init = async () => {
                 let splitResult = item.Location.split('/');
                 let file = splitResult.splice(1, splitResult.length - 1).join('/');
 
-                if (file.indexOf('.html') < 0) {
+                if (path.extname(file) !== '.html') {
                     assetJsonMap.map.push(file);
                 }
                 incrementalFiles.push(file);
