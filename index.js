@@ -370,7 +370,7 @@ const initCloudBase = async () => {
 
   fs.writeFileSync(assetJsonFile, JSON.stringify(assetJsonMap, 4, null));
 
-  //   await uploadStorageFile(assetJsonFile, assetFileName);
+    await uploadStorageFile(assetJsonFile, assetFileName);
 
   if (fs.existsSync(assetJsonFile)) {
     fs.unlinkSync(assetJsonFile);
