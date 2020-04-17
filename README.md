@@ -6,7 +6,7 @@
 
 - secretKey
   必填
-  腾讯云 secret Key
+  腾讯云 secret Key.
 
 - bucket
   选填
