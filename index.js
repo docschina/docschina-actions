@@ -294,16 +294,17 @@ const initCloudBase = async () => {
   files.forEach((file) => {
     let filePath = path.join(codePath, file);
     let key = staticDestPath ? path.join(staticDestPath, file) : file;
+    let hosting = require('@cloudbase/cli/lib/commands/hosting/hosting');
 
     uploadActions.push(
-      deployHostingFile(filePath, key, envId)
-      //   hosting.deploy(
-      //     {
-      //       envId,
-      //     },
-      //     filePath,
-      //     key
-      //   )
+      //   deployHostingFile(filePath, key, envId)
+      hosting.deploy(
+        {
+          envId,
+        },
+        filePath,
+        key
+      )
       //   hostingDeploy({
       //     filePath,
       //     cloudPath: key,
@@ -343,17 +344,17 @@ const initCloudBase = async () => {
   }
 };
 
-const deployHostingFile = async function (srcPath, cloudPath, envId) {
-  const hosting = require('@cloudbase/cli/lib/commands/hosting/hosting');
+// const deployHostingFile = async function (srcPath, cloudPath, envId) {
+//   const hosting = require('@cloudbase/cli/lib/commands/hosting/hosting');
 
-  return hosting.deploy(
-    {
-      envId,
-    },
-    srcPath,
-    cloudPath
-  );
-};
+//   return hosting.deploy(
+//     {
+//       envId,
+//     },
+//     srcPath,
+//     cloudPath
+//   );
+// };
 
 // 上传到云开发服务
 if (envId) {
