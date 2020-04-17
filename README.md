@@ -2,7 +2,7 @@
 
 - secretId
   必填
-  腾讯云 secret ID.
+  腾讯云 secret ID
 
 - secretKey
   必填
