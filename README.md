@@ -10,7 +10,7 @@
 
 - bucket
   选填
-  腾讯云 COS 桶
+  腾讯云 COS 桶.
 
 - region
   选填
