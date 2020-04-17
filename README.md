@@ -30,7 +30,7 @@
 
 - isForce
   选填
-  是否强制全量更新，默认为 false，即增量更新
+  是否强制全量更新，默认为 false，即增量更新.
 
 - skipFiles
   选填
