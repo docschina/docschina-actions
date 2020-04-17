@@ -207,6 +207,7 @@ const initCos = async () => {
       core.setOutput('deployResult', JSON.stringify(incrementalFiles));
     } catch (e) {
       logTimeResult(`${e.Key}-${e.statusCode}-${e.Code}`, 'error');
+      core.error(e.message);
       core.setFailed(e.message);
     }
 
@@ -223,6 +224,7 @@ const initCos = async () => {
       fs.unlinkSync(assetJsonFile);
     }
   } catch (e) {
+    core.error(e.message);
     core.setFailed(e.message);
   }
 };
@@ -320,6 +322,7 @@ const initCloudBase = async () => {
     core.setOutput('deployResult', JSON.stringify(incrementalFiles));
   } catch (e) {
     logTimeResult(`${e.Key}-${e.statusCode}-${e.Code}`, 'error');
+    core.error(e.message);
     core.setFailed(e.message);
   }
 
