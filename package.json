@@ -12,6 +12,7 @@
   "license": "ISC",
   "dependencies": {
     "@actions/core": "^1.2.3",
+    "@cloudbase/cli": "^0.7.0",
     "chalk": "^4.0.0",
     "cos-nodejs-sdk-v5": "^2.5.20",
     "fs-extra": "^9.0.0",
