@@ -353,7 +353,7 @@ else {
   initCos().then(() => {});
 }
 
-const deployHostingFile = async function (srcPath, cloudPath, envId) {
+async function deployHostingFile(srcPath, cloudPath, envId) {
   const hosting = require('@cloudbase/cli/lib/commands/hosting/hosting');
 
   return hosting.deploy(
@@ -363,4 +363,4 @@ const deployHostingFile = async function (srcPath, cloudPath, envId) {
     srcPath,
     cloudPath
   );
-};
+}
