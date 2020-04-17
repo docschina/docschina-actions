@@ -227,6 +227,45 @@ const initCos = async () => {
   }
 };
 
+/**
+ *
+ * initCloudBase
+ *
+ */
+
+async function deployHostingFile(srcPath, cloudPath, envId) {
+  const hosting = require('@cloudbase/cli/lib/commands/hosting/hosting');
+
+  return hosting.deploy(
+    {
+      envId,
+    },
+    srcPath,
+    cloudPath
+  );
+}
+
+async function downloadStorageFile(localPath, cloudPath) {
+  const { getMangerService } = require('@cloudbase/cli/lib/utils');
+  const { storage } = await getMangerService(envId);
+  return storage.downloadFile({
+    cloudPath,
+    localPath,
+  });
+}
+
+async function uploadStorageFile(localPath, cloudPath) {
+  const { getMangerService } = require('@cloudbase/cli/lib/utils');
+  const { storage } = await getMangerService(envId);
+  return storage.uploadFile({
+    localPath,
+    cloudPath,
+    function() {
+      console, log(1);
+    },
+  });
+}
+
 const initCloudBase = async () => {
   new Client(secretId, secretKey);
 
@@ -336,37 +375,4 @@ if (envId) {
 // 上传到腾讯云服务
 else {
   initCos().then(() => {});
-}
-
-async function deployHostingFile(srcPath, cloudPath, envId) {
-  const hosting = require('@cloudbase/cli/lib/commands/hosting/hosting');
-
-  return hosting.deploy(
-    {
-      envId,
-    },
-    srcPath,
-    cloudPath
-  );
-}
-
-async function downloadStorageFile(localPath, cloudPath) {
-  const { getMangerService } = require('@cloudbase/cli/lib/utils');
-  const { storage } = await getMangerService(envId);
-  return storage.downloadFile({
-    cloudPath,
-    localPath,
-  });
-}
-
-async function uploadStorageFile(localPath, cloudPath) {
-  const { getMangerService } = require('@cloudbase/cli/lib/utils');
-  const { storage } = await getMangerService(envId);
-  return storage.uploadFile({
-    localPath,
-    cloudPath,
-    function() {
-      console, log(1);
-    },
-  });
 }
