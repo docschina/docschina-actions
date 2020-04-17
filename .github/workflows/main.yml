@@ -27,7 +27,8 @@ jobs:
 
       #   - name: Get Deployment Result
       #     run: echo "Deploy to docschina result ${{ steps.docschinaDeploy.outputs.deployResult }}"
-
+      - name: Checkout
+        uses: actions/checkout@v2
       - name: Deploy static to Tencent CloudBase
         id: deployStatic
         uses: TencentCloudBase/cloudbase-action@v1
