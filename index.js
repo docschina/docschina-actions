@@ -303,10 +303,9 @@ const initCloudBase = async () => {
   // 将 html 文件放到最后再上传
   let files = appendHtmlFiles(filterFiles);
 
+  new Client(secretId, secretKey);
   let uploadActions = [];
   files.forEach((file) => {
-    new Client(secretId, secretKey);
-    core.debug('====login success===');
     let filePath = path.join(codePath, file);
     let key = staticDestPath ? path.join(staticDestPath, file) : file;
 
