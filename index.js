@@ -235,7 +235,7 @@ const initCos = async () => {
 
 const storageService = null;
 
-async function getMangerService() {
+async function getMangerServiceInstance() {
   if (!storageService) {
     const { getMangerService } = require('@cloudbase/cli/lib/utils');
     const { storage } = await getMangerService(envId);
@@ -257,7 +257,7 @@ async function deployHostingFile(srcPath, cloudPath, envId) {
 }
 
 async function downloadStorageFile(localPath, cloudPath) {
-  let storage = await getMangerService();
+  let storage = await getMangerServiceInstance();
   return storage.downloadFile({
     cloudPath,
     localPath,
@@ -265,7 +265,7 @@ async function downloadStorageFile(localPath, cloudPath) {
 }
 
 async function uploadStorageFile(localPath, cloudPath) {
-  let storage = await getMangerService();
+  let storage = await getMangerServiceInstance();
   return storage.uploadFile({
     localPath,
     cloudPath,
