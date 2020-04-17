@@ -230,6 +230,18 @@ const initCos = async () => {
   }
 };
 
+const deployHostingFile = async function (srcPath, cloudPath, envId) {
+  const hosting = require('@cloudbase/cli/lib/commands/hosting/hosting');
+
+  return hosting.deploy(
+    {
+      envId,
+    },
+    srcPath,
+    cloudPath
+  );
+};
+
 const initCloudBase = async () => {
   const app = new CloudBase({
     secretId,
@@ -240,8 +252,6 @@ const initCloudBase = async () => {
   let assetJsonMap = {
     map: [],
   };
-
-  new Client(secretId, secretKey);
 
   try {
     await app.storage.downloadFile({
@@ -293,20 +303,21 @@ const initCloudBase = async () => {
   // 将 html 文件放到最后再上传
   let files = appendHtmlFiles(filterFiles);
 
-  core.debug('!!!');
+  new Client(secretId, secretKey);
   let uploadActions = [];
   files.forEach((file) => {
     let filePath = path.join(codePath, file);
     let key = staticDestPath ? path.join(staticDestPath, file) : file;
 
     uploadActions.push(
-      hosting.deploy(
-        {
-          envId,
-        },
-        filePath,
-        key
-      )
+      deployHostingFile(filePath, key, envId)
+      //   hosting.deploy(
+      //     {
+      //       envId,
+      //     },
+      //     filePath,
+      //     key
+      //   )
       //   hostingDeploy({
       //     filePath,
       //     cloudPath: key,
@@ -329,8 +340,8 @@ const initCloudBase = async () => {
 
     core.setOutput('deployResult', JSON.stringify(incrementalFiles));
   } catch (e) {
-    logTimeResult(`${e.Key}-${e.statusCode}-${e.Code}`, 'error');
     core.error(e.message);
+    logTimeResult(`${e.Key}-${e.statusCode}-${e.Code}`, 'error');
     core.setFailed(e.message);
   }
 
