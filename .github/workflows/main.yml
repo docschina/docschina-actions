@@ -27,17 +27,4 @@ jobs:
           isForce: ${{ secrets.ISFORCE }}
           envId: ${{ secrets.ENV_ID }}
       - name: Get Deployment Result
-        run:
-          echo "Deploy to docschina result ${{ steps.docschinaDeploy.outputs.deployResult }}"
-          # - name: Checkout
-      #   uses: actions/checkout@v2
-      # - name: Deploy static to Tencent CloudBase
-      #   id: deployStatic
-      #   uses: TencentCloudBase/cloudbase-action@v1
-      #   with:
-      #     secretId: ${{ secrets.SECRET_ID }}
-      #     secretKey: ${{ secrets.SECRET_KEY }}
-      #     envId: ${{ secrets.ENV_ID }}
-      #     staticSrcPath: ./build
-      # - name: Get the deploy result
-      #   run: echo "Deploy to cloudbase result ${{ steps.deployStatic.outputs.deployResult }}"
+        run: echo "Deploy to docschina result ${{ steps.docschinaDeploy.outputs.deployResult }}"
