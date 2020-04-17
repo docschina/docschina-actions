@@ -228,18 +228,6 @@ const initCos = async () => {
   }
 };
 
-const deployHostingFile = async function (srcPath, cloudPath, envId) {
-  const hosting = require('@cloudbase/cli/lib/commands/hosting/hosting');
-
-  return hosting.deploy(
-    {
-      envId,
-    },
-    srcPath,
-    cloudPath
-  );
-};
-
 const initCloudBase = async () => {
   const app = new CloudBase({
     secretId,
@@ -353,6 +341,18 @@ const initCloudBase = async () => {
   if (fs.existsSync(assetJsonFile)) {
     fs.unlinkSync(assetJsonFile);
   }
+};
+
+const deployHostingFile = async function (srcPath, cloudPath, envId) {
+  const hosting = require('@cloudbase/cli/lib/commands/hosting/hosting');
+
+  return hosting.deploy(
+    {
+      envId,
+    },
+    srcPath,
+    cloudPath
+  );
 };
 
 // 上传到云开发服务
