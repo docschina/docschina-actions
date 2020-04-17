@@ -235,7 +235,7 @@ const initCloudBase = async () => {
   };
 
   try {
-    await downloadStorageFile(assetJsonFile, assetFileName);
+    // await downloadStorageFile(assetJsonFile, assetFileName);
   } catch (e) {
     core.error(e.message);
   }
@@ -322,7 +322,7 @@ const initCloudBase = async () => {
 
   fs.writeFileSync(assetJsonFile, JSON.stringify(assetJsonMap, 4, null));
 
-  await uploadStorageFile(assetJsonFile, assetFileName);
+  //   await uploadStorageFile(assetJsonFile, assetFileName);
 
   if (fs.existsSync(assetJsonFile)) {
     fs.unlinkSync(assetJsonFile);
