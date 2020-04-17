@@ -6,8 +6,6 @@ const chalk = require('chalk');
 const core = require('@actions/core');
 const COS = require('cos-nodejs-sdk-v5');
 const Client = require('@cloudbase/cli');
-const { hostingDeploy } = require('@cloudbase/cli/lib/hosting');
-const hosting = require('@cloudbase/cli/lib/commands/hosting/hosting');
 const CloudBase = require('@cloudbase/manager-node');
 
 let secretId = core.getInput('secretId');
