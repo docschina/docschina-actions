@@ -7,6 +7,7 @@ const core = require('@actions/core');
 const COS = require('cos-nodejs-sdk-v5');
 const Client = require('@cloudbase/cli');
 const { hostingDeploy } = require('@cloudbase/cli/lib/hosting');
+const hosting = require('@cloudbase/cli/lib/commands/hosting/hosting');
 const CloudBase = require('@cloudbase/manager-node');
 
 let secretId = core.getInput('secretId');
@@ -253,7 +254,6 @@ const initCloudBase = async () => {
 
   // 获取 map 数据
   if (fs.existsSync(assetJsonFile) && !isForce) {
-    console.log(1);
     assetJsonMap.map = require(assetJsonFile).map;
   }
 
@@ -293,17 +293,25 @@ const initCloudBase = async () => {
   // 将 html 文件放到最后再上传
   let files = appendHtmlFiles(filterFiles);
 
+  core.debug('!!!');
   let uploadActions = [];
   files.forEach((file) => {
     let filePath = path.join(codePath, file);
     let key = staticDestPath ? path.join(staticDestPath, file) : file;
 
     uploadActions.push(
-      hostingDeploy({
+      hosting.deploy(
+        {
+          envId,
+        },
         filePath,
-        cloudPath: key,
-        envId,
-      })
+        key
+      )
+      //   hostingDeploy({
+      //     filePath,
+      //     cloudPath: key,
+      //     envId,
+      //   })
     );
   });
 
