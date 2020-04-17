@@ -229,11 +229,11 @@ const initCos = async () => {
 };
 
 const initCloudBase = async () => {
-  //   const app = new CloudBase({
-  //     secretId,
-  //     secretKey,
-  //     envId,
-  //   });
+  const app = new CloudBase({
+    secretId,
+    secretKey,
+    envId,
+  });
 
   let assetJsonMap = {
     map: [],
