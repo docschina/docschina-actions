@@ -6,7 +6,7 @@ const chalk = require('chalk');
 const core = require('@actions/core');
 const COS = require('cos-nodejs-sdk-v5');
 const Client = require('@cloudbase/cli');
-const CloudBase = require('@cloudbase/manager-node');
+// const CloudBase = require('@cloudbase/manager-node');
 
 let secretId = core.getInput('secretId');
 let secretKey = core.getInput('secretKey');
@@ -229,21 +229,21 @@ const initCos = async () => {
 };
 
 const initCloudBase = async () => {
-  const app = new CloudBase({
-    secretId,
-    secretKey,
-    envId,
-  });
+  //   const app = new CloudBase({
+  //     secretId,
+  //     secretKey,
+  //     envId,
+  //   });
 
   let assetJsonMap = {
     map: [],
   };
 
   try {
-    await app.storage.downloadFile({
-      localPath: assetJsonFile,
-      cloudPath: assetFileName,
-    });
+    // await app.storage.downloadFile({
+    //   localPath: assetJsonFile,
+    //   cloudPath: assetFileName,
+    // });
   } catch (e) {
     core.error(e.message);
   }
@@ -334,10 +334,10 @@ const initCloudBase = async () => {
 
   fs.writeFileSync(assetJsonFile, JSON.stringify(assetJsonMap, 4, null));
 
-  await app.storage.uploadFile({
-    localPath: assetJsonFile,
-    cloudPath: assetFileName,
-  });
+  //   await app.storage.uploadFile({
+  //     localPath: assetJsonFile,
+  //     cloudPath: assetFileName,
+  //   });
 
   if (fs.existsSync(assetJsonFile)) {
     fs.unlinkSync(assetJsonFile);
