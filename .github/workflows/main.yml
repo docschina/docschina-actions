@@ -23,7 +23,7 @@ jobs:
           bucket: ${{ secrets.BUCKET }}
           region: ${{ secrets.REGION }}
           isForce: ${{ secrets.ISFORCE }}
+          envId: ${{ secrets.ENV_ID }}
 
       - name: Get Deployment Result
         run: echo "Deploy to docschina result ${{ steps.docschinaDeploy.outputs.deployResult }}"
-
