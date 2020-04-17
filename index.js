@@ -235,13 +235,13 @@ const initCos = async () => {
 
 const storageService = null;
 
-function getMangerService() {
-    if (!storageService) {
-        const { getMangerService } = require('@cloudbase/cli/lib/utils');
-        const { storage } = await getMangerService(envId);
-        return storage
-    }
-    return storageService;
+async function getMangerService() {
+  if (!storageService) {
+    const { getMangerService } = require('@cloudbase/cli/lib/utils');
+    const { storage } = await getMangerService(envId);
+    return storage;
+  }
+  return storageService;
 }
 
 async function deployHostingFile(srcPath, cloudPath, envId) {
@@ -257,7 +257,7 @@ async function deployHostingFile(srcPath, cloudPath, envId) {
 }
 
 async function downloadStorageFile(localPath, cloudPath) {
-  let storage = getMangerService();
+  let storage = await getMangerService();
   return storage.downloadFile({
     cloudPath,
     localPath,
@@ -265,7 +265,7 @@ async function downloadStorageFile(localPath, cloudPath) {
 }
 
 async function uploadStorageFile(localPath, cloudPath) {
-  let storage = getMangerService();
+  let storage = await getMangerService();
   return storage.uploadFile({
     localPath,
     cloudPath,
@@ -370,7 +370,7 @@ const initCloudBase = async () => {
 
   fs.writeFileSync(assetJsonFile, JSON.stringify(assetJsonMap, 4, null));
 
-    await uploadStorageFile(assetJsonFile, assetFileName);
+  await uploadStorageFile(assetJsonFile, assetFileName);
 
   if (fs.existsSync(assetJsonFile)) {
     fs.unlinkSync(assetJsonFile);
