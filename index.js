@@ -235,7 +235,7 @@ const initCloudBase = async () => {
   };
 
   try {
-    // await downloadStorageFile(assetJsonFile, assetFileName);
+    await downloadStorageFile(assetJsonFile, assetFileName);
   } catch (e) {
     core.error(e.message);
   }
