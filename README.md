@@ -14,7 +14,7 @@
 
 - region
   选填
-  腾讯云 COS 地域
+  腾讯云 COS 地域.
 
 - staticSrcPath
   必填
