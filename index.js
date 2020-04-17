@@ -290,11 +290,11 @@ const initCloudBase = async () => {
   let files = appendHtmlFiles(filterFiles);
 
   new Client(secretId, secretKey);
+  let hosting = require('@cloudbase/cli/lib/commands/hosting/hosting');
   let uploadActions = [];
   files.forEach((file) => {
     let filePath = path.join(codePath, file);
     let key = staticDestPath ? path.join(staticDestPath, file) : file;
-    let hosting = require('@cloudbase/cli/lib/commands/hosting/hosting');
 
     uploadActions.push(
       //   deployHostingFile(filePath, key, envId)
