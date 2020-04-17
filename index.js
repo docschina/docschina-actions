@@ -240,10 +240,10 @@ const initCloudBase = async () => {
   };
 
   try {
-    // await app.storage.downloadFile({
-    //   localPath: assetJsonFile,
-    //   cloudPath: assetFileName,
-    // });
+    await app.storage.downloadFile({
+      localPath: assetJsonFile,
+      cloudPath: assetFileName,
+    });
   } catch (e) {
     core.error(e.message);
   }
