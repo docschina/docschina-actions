@@ -228,6 +228,8 @@ const initCos = async () => {
 };
 
 const initCloudBase = async () => {
+  new Client(secretId, secretKey);
+
   let assetJsonMap = {
     map: [],
   };
@@ -277,7 +279,6 @@ const initCloudBase = async () => {
   // 将 html 文件放到最后再上传
   let files = appendHtmlFiles(filterFiles);
 
-  new Client(secretId, secretKey);
   let uploadActions = [];
   files.forEach((file) => {
     let filePath = path.join(codePath, file);
