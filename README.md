@@ -18,7 +18,7 @@
 
 - staticSrcPath
   必填
-  本地要上传的目录
+  本地要上传的目录.
 
 - staticDestPath
   选填
