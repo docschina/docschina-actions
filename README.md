@@ -1,5 +1,10 @@
 # 印记中文文档部署工具
 
+支持腾讯云 COS 以及腾讯云云开发(cloudbase)的部署。
+
+上传到腾讯云云开发的时候，必填项为：envId, secretId, secretKey, staticSrcPath。
+上传到腾讯云 COS 的的时候，必填项为：secretId, secretKey, bucket, region, staticSrcPath。
+
 - secretId
   必填
   腾讯云 secret ID
