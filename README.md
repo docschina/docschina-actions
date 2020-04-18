@@ -2,6 +2,8 @@
 
 支持腾讯云 COS 以及腾讯云云开发(cloudbase)的部署。
 
+## Secrets
+
 - 上传到腾讯云云开发的时候，必填项为：envId, secretId, secretKey, staticSrcPath.
 - 上传到腾讯云 COS 的的时候，必填项为：secretId, secretKey, bucket, region, staticSrcPath.
 
@@ -40,3 +42,31 @@
 - skipFiles
   选填
   要跳过不上传的文件，默认为[]，即无任何要跳过的文件或目录.
+
+## 用法
+
+```yaml
+-steps:
+  - name: Build and Grant Permission
+        run: |
+          npm i
+          npm run build
+          sudo -i
+          sudo chown -R $USER build
+
+  - name: Docschina Github Action
+        id: docschinaDeploy
+        uses: docschina/docschina-actions@1.0.0
+        with:
+          secretId: ${{ secrets.SECRET_ID }}
+          secretKey: ${{ secrets.SECRET_KEY }}
+          staticSrcPath: ./build
+          bucket: ${{ secrets.BUCKET }}
+          region: ${{ secrets.REGION }}
+          isForce: ${{ secrets.ISFORCE }}
+          envId: ${{ secrets.ENV_ID }}
+    - name: Get Deployment Result
+        run: echo "Deploy to docschina result ${{ steps.docschinaDeploy.outputs.deployResult }}"
+```
+
+如果想进入 `DEBUG` 模式，请配置 `Secrets` 的 `Key` 为 `ACTIONS_STEP_DEBUG，值为` true.
