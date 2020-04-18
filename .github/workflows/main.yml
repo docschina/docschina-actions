@@ -15,16 +15,24 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v2
+
+      - name: Build
+        run: |
+          npm run build
+          sudo -i
+          sudo chown -R $USER ./dist
+
       - name: Docschina Github Action
         id: docschinaDeploy
         uses: docschina/docschina-actions@master
         with:
           secretId: ${{ secrets.SECRET_ID }}
           secretKey: ${{ secrets.SECRET_KEY }}
-          staticSrcPath: ./build
+          staticSrcPath: ./dist
           bucket: ${{ secrets.BUCKET }}
           region: ${{ secrets.REGION }}
           isForce: ${{ secrets.ISFORCE }}
           envId: ${{ secrets.ENV_ID }}
+
       - name: Get Deployment Result
         run: echo "Deploy to docschina result ${{ steps.docschinaDeploy.outputs.deployResult }}"
