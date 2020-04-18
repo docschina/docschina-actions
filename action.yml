@@ -1,30 +1,30 @@
-name: "Docschina Github Action"
-description: "印记中文部署"
+name: 'Docschina Github Action - Tencent Cloud COS & Cloudbase'
+description: '印记中文部署 - 腾讯云 COS & 云开发'
 author: lcxfs1991
 branding:
   icon: cloud
   color: red
 inputs:
   secretId:
-    description: "腾讯云 secretId"
+    description: '腾讯云 secretId'
     required: true
   secretKey:
-    description: "腾讯云 secretKey"
+    description: '腾讯云 secretKey'
     required: true
   envId:
-    description: "云开发环境 Id"
+    description: '云开发环境 Id'
     required: true
   staticSrcPath:
-    description: "静态资源:本地路径"
+    description: '静态资源:本地路径'
     required: true
     default: build
   staticDestPath:
-    description: "静态资源:云端路径"
+    description: '静态资源:云端路径'
     required: true
-    default: ""
+    default: ''
 outputs:
   deployResult:
-    description: "部署结果"
+    description: '部署结果'
 runs:
-  using: "node12"
-  main: "./index.js"
+  using: 'node12'
+  main: './index.js'
