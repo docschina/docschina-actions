@@ -143,7 +143,7 @@ const initCos = async () => {
     core.debug(`codePath: ${codePath}`);
 
     //收集需要上传的文件，传入数组
-    let scanFiles = glob.sync('**/*.*', { cwd: codePath });
+    let scanFiles = glob.sync('**', { cwd: codePath });
 
     core.debug(`scanFiles for ${codePath}: ${scanFiles}`);
 
@@ -301,7 +301,7 @@ const initCloudBase = async () => {
   core.debug(`codePath: ${codePath}`);
 
   //收集需要上传的文件，传入数组
-  let scanFiles = glob.sync('**/*.*', { cwd: codePath });
+  let scanFiles = glob.sync('**', { cwd: codePath });
 
   core.debug(`scanFiles for ${codePath}: ${scanFiles}`);
 
