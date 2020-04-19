@@ -17,6 +17,7 @@ let region = core.getInput('region');
 let isForce = core.getInput('isForce') || false;
 let skipFiles = core.getInput('skipFiles') || [];
 let assetFileName = core.getInput('assetFileName') || 'docschina-assets.json';
+let workspace = __dirname;
 
 if (!process.env.CI) {
   const config = require('./config/index');
@@ -28,6 +29,7 @@ if (!process.env.CI) {
   bucket = config.bucket;
   region = config.region;
   isForce = config.isForce;
+  workspace = process.env.GITHUB_WORKSPACE;
 }
 
 const assetJsonFile = path.join(__dirname, assetFileName);
