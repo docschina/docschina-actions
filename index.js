@@ -32,7 +32,7 @@ if (!process.env.CI) {
   workspace = process.env.GITHUB_WORKSPACE;
 }
 
-const assetJsonFile = path.join(__dirname, assetFileName);
+const assetJsonFile = path.join(workspace, assetFileName);
 
 const cos = new COS({
   SecretId: secretId,
@@ -141,7 +141,7 @@ const initCos = async () => {
       skipFiles = JSON.parse(skipFiles);
     }
 
-    let codePath = path.join(__dirname, staticSrcPath);
+    let codePath = path.join(workspace, staticSrcPath);
     core.debug(`codePath: ${codePath}`);
 
     //收集需要上传的文件，传入数组
@@ -299,7 +299,7 @@ const initCloudBase = async () => {
     skipFiles = JSON.parse(skipFiles);
   }
 
-  let codePath = path.join(__dirname, staticSrcPath);
+  let codePath = path.join(workspace, staticSrcPath);
   core.debug(`codePath: ${codePath}`);
 
   //收集需要上传的文件，传入数组
