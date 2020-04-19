@@ -1,5 +1,6 @@
 const fs = require('fs-extra');
 const path = require('path');
+const crypto = require('crypto');
 const glob = require('glob');
 const moment = require('moment');
 const chalk = require('chalk');
@@ -39,6 +40,13 @@ const cos = new COS({
   SecretId: secretId,
   SecretKey: secretKey,
 });
+
+const md5 = (str) => {
+  let md5sum = crypto.createHash('md5');
+  md5sum.update(str);
+  let content = md5sum.digest('hex');
+  return content;
+};
 
 const getObject = async () => {
   return new Promise((resolve, reject) => {
@@ -132,16 +140,48 @@ const sliceUploadFile = function (cos, options) {
   });
 };
 
+const filterFilesByCondition = ({scanFiles, skipFiles, codePath, assetJsonMap}) => {
+  let filterFiles = scanFiles.filter((file) => {
+    // 手动设置跳过的文件
+    for (let i = 0, len = skipFiles.length; i < len; i++) {
+      if (file.indexOf(skipFiles[i]) === 0) {
+        return false;
+      }
+    }
+
+    let filePath = path.join(codePath, file);
+
+    // 剔走目录
+    let stat = fs.statSync(filePath);
+
+    if (stat.isDirectory()) {
+      return false;
+    }
+
+    // 剔走已经上传的内容
+    let compareText = (path.extname(file) !== '.html') ? 1 : md5(fs.readFileSync(path.join(codePath, file)));
+
+    if (assetJsonMap.mapv2.hasOwnProperty(file) && assetJsonMap.mapv2[file] === compareText) {
+      return false;
+    }
+
+    return true;
+  });
+
+  // 将 html 文件放到最后再上传
+  return appendHtmlFiles(filterFiles);
+}
+
 const initCos = async () => {
   try {
     let result = await getObject();
     let assetJsonMap = {
-      map: [],
+      mapv2: [],
     };
 
     // 获取 map 数据
     if (result.statusCode === 200 && !isForce) {
-      assetJsonMap.map = require(assetJsonFile).map;
+      assetJsonMap.mapv2 = require(assetJsonFile).mapv2 || {};
     }
 
     if (typeof skipFiles === 'string') {
@@ -157,31 +197,7 @@ const initCos = async () => {
     core.debug(`scanFiles for ${codePath}: ${scanFiles}`);
 
     // 剔除文件
-    let filterFiles = scanFiles.filter((file) => {
-      // 剔走已经上传的内容
-      if (assetJsonMap.map.includes(file)) {
-        return false;
-      }
-
-      // 手动设置跳过的文件
-      // if (skipFiles.includes(file)) {
-      //   return false;
-      // }
-      for (let i = 0, len = skipFiles.length; i < len; i++) {
-        if (file.indexOf(skipFiles[i]) === 0) {
-          return false;
-        }
-      }
-
-      let filePath = path.join(codePath, file);
-
-      // 剔走目录
-      let stat = fs.statSync(filePath);
-      return !stat.isDirectory();
-    });
-
-    // 将 html 文件放到最后再上传
-    let files = appendHtmlFiles(filterFiles);
+    let files = filterFilesByCondition({scanFiles, skipFiles, codePath, assetJsonMap});
 
     let uploadActions = [];
     files.forEach((file) => {
@@ -208,12 +224,15 @@ const initCos = async () => {
         if (!result.code) {
           let item = result.data;
           logTimeResult(`${item.Location}-${item.statusCode}`);
-
           let splitResult = item.Location.split('/');
           let file = splitResult.splice(1, splitResult.length - 1).join('/');
 
           if (path.extname(file) !== '.html') {
-            assetJsonMap.map.push(file);
+            assetJsonMap.mapv2[file] = 1;
+          }
+          else {
+            let md5Str = md5(fs.readFileSync(path.join(codePath, file)));
+            assetJsonMap.mapv2[file] = md5Str;
           }
           incrementalFiles.push(file);
         } else {
@@ -301,7 +320,7 @@ const initCloudBase = async () => {
   new Client(secretId, secretKey);
 
   let assetJsonMap = {
-    map: [],
+    mapv2: {},
   };
 
   try {
@@ -312,7 +331,7 @@ const initCloudBase = async () => {
 
   // 获取 map 数据
   if (fs.existsSync(assetJsonFile) && !isForce) {
-    assetJsonMap.map = require(assetJsonFile).map;
+    assetJsonMap.mapv2 = require(assetJsonFile).mapv2 || {};
   }
 
   if (typeof skipFiles === 'string') {
@@ -329,32 +348,7 @@ const initCloudBase = async () => {
   core.debug(`scanFiles for ${codePath}: ${scanFiles}`);
 
   // 剔除文件
-  let filterFiles = scanFiles.filter((file) => {
-    // 剔走已经上传的内容
-    if (assetJsonMap.map.includes(file)) {
-      return false;
-    }
-
-    // 手动设置跳过的文件
-    // if (skipFiles.includes(file)) {
-    //   return false;
-    // }
-    for (let i = 0, len = skipFiles.length; i < len; i++) {
-      if (file.indexOf(skipFiles[i]) === 0) {
-        return false;
-      }
-    }
-
-    let filePath = path.join(codePath, file);
-
-    // 剔走目录
-    let stat = fs.statSync(filePath);
-    return !stat.isDirectory();
-  });
-  
-
-  // 将 html 文件放到最后再上传
-  let files = appendHtmlFiles(filterFiles);
+  let files = filterFilesByCondition({scanFiles, skipFiles, codePath, assetJsonMap});
 
   let uploadActions = [];
   files.forEach((file) => {
@@ -363,18 +357,6 @@ const initCloudBase = async () => {
 
     uploadActions.push(
       deployHostingFile(filePath, key, envId)
-      //   hosting.deploy(
-      //     {
-      //       envId,
-      //     },
-      //     filePath,
-      //     key
-      //   )
-      //   hostingDeploy({
-      //     filePath,
-      //     cloudPath: key,
-      //     envId,
-      //   })
     );
   });
 
@@ -385,7 +367,11 @@ const initCloudBase = async () => {
     await Promise.all(uploadActions);
     files.forEach((file) => {
       if (path.extname(file) !== '.html') {
-        assetJsonMap.map.push(file);
+        assetJsonMap.mapv2[file] = 1;
+      }
+      else {
+        let md5Str = md5(fs.readFileSync(path.join(codePath, file)));
+        assetJsonMap.mapv2[file] = md5Str;
       }
       incrementalFiles.push(file);
     });
