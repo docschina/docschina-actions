@@ -29,6 +29,7 @@ if (!process.env.CI) {
   bucket = config.bucket;
   region = config.region;
   isForce = config.isForce;
+  skipFiles = config.skipFiles;
   workspace = __dirname;
 }
 

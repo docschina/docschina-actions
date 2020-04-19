@@ -22,6 +22,10 @@ inputs:
     description: '静态资源:云端路径'
     required: true
     default: ''
+  skipFiles:
+    description: '忽略的文件'
+    required: true
+    default: '[]'
 outputs:
   deployResult:
     description: '部署结果'
