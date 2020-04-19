@@ -36,8 +36,7 @@ jobs:
           region: ${{ secrets.REGION }}
           isForce: ${{ secrets.ISFORCE }}
           envId: ${{ secrets.ENV_ID }}
-          skipFiles: 
-            - index.html
+          skipFiles: ${{ secrets.SKIP_FILES }}
 
       - name: Get Deployment Result
         run: echo "Deploy to docschina result ${{ steps.docschinaDeploy.outputs.deployResult }}"
