@@ -20,6 +20,8 @@ jobs:
         run: |
           npm run build
           sudo -i
+          cd build
+          pwd
           sudo chown -R $USER ./dist
 
       - name: Docschina Github Action
