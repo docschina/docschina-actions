@@ -20,7 +20,7 @@ jobs:
         run: |
           npm run build
           ls
-          cd build
+          cd dist
           pwd
 
       - name: Docschina Github Action
