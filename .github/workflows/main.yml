@@ -22,8 +22,8 @@ jobs:
           ls
           cd dist
           pwd
-          sudo chown -R $USER ./dist
-          sudo chmod -R 777 ./dist
+          sudo chown -R $USER dist
+          sudo chmod -R 777 dist
 
       - name: Docschina Github Action
         id: docschinaDeploy
