@@ -313,6 +313,7 @@ const initCloudBase = async () => {
   if (typeof skipFiles === 'string') {
     skipFiles = JSON.parse(skipFiles);
   }
+  core.debug(`skipFiles: ${skipFiles}`);
 
   let codePath = path.join(workspace, staticSrcPath);
   core.debug(`codePath: ${codePath}`);
