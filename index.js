@@ -164,8 +164,13 @@ const initCos = async () => {
       }
 
       // 手动设置跳过的文件
-      if (skipFiles.includes(file)) {
-        return false;
+      // if (skipFiles.includes(file)) {
+      //   return false;
+      // }
+      for (let i = 0, len = skipFiles.length; i < len; i++) {
+        if (file.indexOf(skipFiles[i]) === 0) {
+          return false;
+        }
       }
 
       let filePath = path.join(codePath, file);
