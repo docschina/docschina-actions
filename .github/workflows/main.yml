@@ -31,7 +31,7 @@ jobs:
         with:
           secretId: ${{ secrets.SECRET_ID }}
           secretKey: ${{ secrets.SECRET_KEY }}
-          staticSrcPath: ./dist
+          staticSrcPath: dist
           bucket: ${{ secrets.BUCKET }}
           region: ${{ secrets.REGION }}
           isForce: ${{ secrets.ISFORCE }}
