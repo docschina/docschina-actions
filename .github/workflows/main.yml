@@ -19,10 +19,8 @@ jobs:
       - name: Build
         run: |
           npm run build
-          ls
           sudo chown -R $USER dist
           sudo chmod -R 777 dist
-          cd dist
           pwd
 
       - name: Docschina Github Action
