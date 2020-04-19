@@ -331,8 +331,13 @@ const initCloudBase = async () => {
     }
 
     // 手动设置跳过的文件
-    if (skipFiles.includes(file)) {
-      return false;
+    // if (skipFiles.includes(file)) {
+    //   return false;
+    // }
+    for (let i = 0, len = skipFiles.length; i < len; i++) {
+      if (file.indexOf(skipFiles[i]) === 0) {
+        return false;
+      }
     }
 
     let filePath = path.join(codePath, file);
@@ -341,6 +346,7 @@ const initCloudBase = async () => {
     let stat = fs.statSync(filePath);
     return !stat.isDirectory();
   });
+  
 
   // 将 html 文件放到最后再上传
   let files = appendHtmlFiles(filterFiles);
