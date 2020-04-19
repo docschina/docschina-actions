@@ -117,9 +117,15 @@ const sliceUploadFile = function (cos, options) {
   return new Promise((resolve, reject) => {
     cos.sliceUploadFile(options, (err, info) => {
       if (err) {
-        reject(err);
+        resolve({
+          code: 1,
+          data: err,
+        });
       } else {
-        resolve(info);
+        resolve({
+          code: 0,
+          data: info,
+        });
       }
     });
   });
@@ -192,19 +198,27 @@ const initCos = async () => {
     try {
       let info = await Promise.all(uploadActions);
 
-      info.forEach((item) => {
-        logTimeResult(`${item.Location}-${item.statusCode}`);
+      info.forEach((result) => {
+        if (!result.code) {
+          let item = result.data;
+          logTimeResult(`${item.Location}-${item.statusCode}`);
 
-        let splitResult = item.Location.split('/');
-        let file = splitResult.splice(1, splitResult.length - 1).join('/');
+          let splitResult = item.Location.split('/');
+          let file = splitResult.splice(1, splitResult.length - 1).join('/');
 
-        if (path.extname(file) !== '.html') {
-          assetJsonMap.map.push(file);
+          if (path.extname(file) !== '.html') {
+            assetJsonMap.map.push(file);
+          }
+          incrementalFiles.push(file);
+        } else {
+          core.debug(result.data);
         }
-        incrementalFiles.push(file);
       });
 
-      core.setOutput('deployResult', JSON.stringify(incrementalFiles));
+      core.setOutput(
+        'deployResult',
+        'success: ' + JSON.stringify(incrementalFiles)
+      );
     } catch (e) {
       logTimeResult(`${e.Key}-${e.statusCode}-${e.Code}`, 'error');
       core.error(e.message);
