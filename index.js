@@ -5,6 +5,7 @@ const glob = require('glob');
 const moment = require('moment');
 const chalk = require('chalk');
 const core = require('@actions/core');
+const asyncPool = require('tiny-async-pool');
 const COS = require('cos-nodejs-sdk-v5');
 const Client = require('@cloudbase/cli');
 
@@ -117,12 +118,16 @@ const logTimeResult = function (result, action = null) {
   }
 };
 
+const sliceUploadFileLimit = (param) => {
+  return sliceUploadFile(param.uploadOption);
+};
+
 /**
  * 上传文件
  * @param {*} cos
  * @param {*} options
  */
-const sliceUploadFile = function (cos, options) {
+const sliceUploadFile = function (options) {
   return new Promise((resolve, reject) => {
     cos.sliceUploadFile(options, (err, info) => {
       if (err) {
@@ -187,7 +192,7 @@ const initCos = async () => {
   try {
     let result = await getObject();
     let assetJsonMap = {
-      mapv2: [],
+      mapv2: {},
     };
 
     // 获取 map 数据
@@ -227,14 +232,15 @@ const initCos = async () => {
         FilePath: filePath,
       };
 
-      uploadActions.push(sliceUploadFile(cos, uploadOption));
+      uploadActions.push({ uploadOption });
     });
 
     // 开始上传文件
     let incrementalFiles = [];
 
     try {
-      let info = await Promise.all(uploadActions);
+      // let info = await Promise.all(uploadActions);
+      let info = await asyncPool(20, uploadActions, sliceUploadFileLimit);
 
       info.forEach((result) => {
         if (!result.code) {
@@ -249,6 +255,7 @@ const initCos = async () => {
             let md5Str = md5(fs.readFileSync(path.join(codePath, file)));
             assetJsonMap.mapv2[file] = md5Str;
           }
+
           incrementalFiles.push(file);
         } else {
           core.debug(result.data);
@@ -267,16 +274,16 @@ const initCos = async () => {
 
     fs.writeFileSync(assetJsonFile, JSON.stringify(assetJsonMap, 4, null));
 
-    await sliceUploadFile(cos, {
+    await sliceUploadFile({
       Bucket: bucket,
       Region: region,
       Key: assetFileName,
       FilePath: assetJsonFile,
     });
 
-    if (fs.existsSync(assetJsonFile)) {
-      fs.unlinkSync(assetJsonFile);
-    }
+    // if (fs.existsSync(assetJsonFile)) {
+    //   fs.unlinkSync(assetJsonFile);
+    // }
   } catch (e) {
     core.error(e.message);
     core.setFailed(e.message);
@@ -300,17 +307,17 @@ async function getMangerServiceInstance() {
   return storageService;
 }
 
-async function deployHostingFile(srcPath, cloudPath, envId) {
+const deployHostingFile = (param) => {
   const hosting = require('@cloudbase/cli/lib/commands/hosting/hosting');
 
   return hosting.deploy(
     {
-      envId,
+      envId: param.envId,
     },
-    srcPath,
-    cloudPath
+    param.filePath, // srcpath
+    param.key // cloudPath
   );
-}
+};
 
 async function downloadStorageFile(localPath, cloudPath) {
   let storage = await getMangerServiceInstance();
@@ -375,14 +382,14 @@ const initCloudBase = async () => {
     let filePath = path.join(codePath, file);
     let key = staticDestPath ? path.join(staticDestPath, file) : file;
 
-    uploadActions.push(deployHostingFile(filePath, key, envId));
+    uploadActions.push({ filePath, key, envId });
   });
 
   // 开始上传文件
   let incrementalFiles = [];
 
   try {
-    await Promise.all(uploadActions);
+    await asyncPool(20, uploadActions, deployHostingFile);
     files.forEach((file) => {
       if (path.extname(file) !== '.html') {
         assetJsonMap.mapv2[file] = 1;
