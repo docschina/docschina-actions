@@ -140,7 +140,12 @@ const sliceUploadFile = function (cos, options) {
   });
 };
 
-const filterFilesByCondition = ({scanFiles, skipFiles, codePath, assetJsonMap}) => {
+const filterFilesByCondition = ({
+  scanFiles,
+  skipFiles,
+  codePath,
+  assetJsonMap,
+}) => {
   let filterFiles = scanFiles.filter((file) => {
     // 手动设置跳过的文件
     for (let i = 0, len = skipFiles.length; i < len; i++) {
@@ -159,9 +164,15 @@ const filterFilesByCondition = ({scanFiles, skipFiles, codePath, assetJsonMap}) 
     }
 
     // 剔走已经上传的内容
-    let compareText = (path.extname(file) !== '.html') ? 1 : md5(fs.readFileSync(path.join(codePath, file)));
+    let compareText =
+      path.extname(file) !== '.html'
+        ? 1
+        : md5(fs.readFileSync(path.join(codePath, file)));
 
-    if (assetJsonMap.mapv2.hasOwnProperty(file) && assetJsonMap.mapv2[file] === compareText) {
+    if (
+      assetJsonMap.mapv2.hasOwnProperty(file) &&
+      assetJsonMap.mapv2[file] === compareText
+    ) {
       return false;
     }
 
@@ -170,7 +181,7 @@ const filterFilesByCondition = ({scanFiles, skipFiles, codePath, assetJsonMap}) 
 
   // 将 html 文件放到最后再上传
   return appendHtmlFiles(filterFiles);
-}
+};
 
 const initCos = async () => {
   try {
@@ -197,7 +208,12 @@ const initCos = async () => {
     core.debug(`scanFiles for ${codePath}: ${scanFiles}`);
 
     // 剔除文件
-    let files = filterFilesByCondition({scanFiles, skipFiles, codePath, assetJsonMap});
+    let files = filterFilesByCondition({
+      scanFiles,
+      skipFiles,
+      codePath,
+      assetJsonMap,
+    });
 
     let uploadActions = [];
     files.forEach((file) => {
@@ -229,8 +245,7 @@ const initCos = async () => {
 
           if (path.extname(file) !== '.html') {
             assetJsonMap.mapv2[file] = 1;
-          }
-          else {
+          } else {
             let md5Str = md5(fs.readFileSync(path.join(codePath, file)));
             assetJsonMap.mapv2[file] = md5Str;
           }
@@ -348,16 +363,19 @@ const initCloudBase = async () => {
   core.debug(`scanFiles for ${codePath}: ${scanFiles}`);
 
   // 剔除文件
-  let files = filterFilesByCondition({scanFiles, skipFiles, codePath, assetJsonMap});
+  let files = filterFilesByCondition({
+    scanFiles,
+    skipFiles,
+    codePath,
+    assetJsonMap,
+  });
 
   let uploadActions = [];
   files.forEach((file) => {
     let filePath = path.join(codePath, file);
     let key = staticDestPath ? path.join(staticDestPath, file) : file;
 
-    uploadActions.push(
-      deployHostingFile(filePath, key, envId)
-    );
+    uploadActions.push(deployHostingFile(filePath, key, envId));
   });
 
   // 开始上传文件
@@ -368,8 +386,7 @@ const initCloudBase = async () => {
     files.forEach((file) => {
       if (path.extname(file) !== '.html') {
         assetJsonMap.mapv2[file] = 1;
-      }
-      else {
+      } else {
         let md5Str = md5(fs.readFileSync(path.join(codePath, file)));
         assetJsonMap.mapv2[file] = md5Str;
       }
