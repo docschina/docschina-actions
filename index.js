@@ -240,7 +240,7 @@ const initCos = async () => {
 
     try {
       // let info = await Promise.all(uploadActions);
-      let info = await asyncPool(20, uploadActions, sliceUploadFileLimit);
+      let info = await asyncPool(10, uploadActions, sliceUploadFileLimit);
 
       info.forEach((result) => {
         if (!result.code) {
@@ -389,7 +389,7 @@ const initCloudBase = async () => {
   let incrementalFiles = [];
 
   try {
-    await asyncPool(20, uploadActions, deployHostingFile);
+    await asyncPool(10, uploadActions, deployHostingFile);
     files.forEach((file) => {
       if (path.extname(file) !== '.html') {
         assetJsonMap.mapv2[file] = 1;
