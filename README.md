@@ -69,4 +69,4 @@
       run: echo "Deploy to docschina result ${{ steps.docschinaDeploy.outputs.deployResult }}"
 ```
 
-如果想进入 `DEBUG` 模式，请配置 `Secrets` 的 `Key` 为 `ACTIONS_STEP_DEBUG，值为` true
+如果想进入 `DEBUG` 模式，请配置 `Secrets` 的 `Key` 为 `ACTIONS_STEP_DEBUG，值为` true.
