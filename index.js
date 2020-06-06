@@ -285,7 +285,7 @@ const initCos = async () => {
     //   fs.unlinkSync(assetJsonFile);
     // }
   } catch (e) {
-    core.error(e.message);
+    core.error(e.stacks);
     core.setFailed(e.message);
   }
 };
