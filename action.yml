@@ -38,5 +38,5 @@ outputs:
   deployResult:
     description: "部署结果"
 runs:
-  using: "node12"
+  using: "node14"
   main: "./index.js"

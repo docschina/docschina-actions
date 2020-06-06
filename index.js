@@ -59,7 +59,7 @@ const getObject = async () => {
         Output: fs.createWriteStream(assetJsonFile),
       },
       function (err, data) {
-        // console.log(err || data);
+        console.log(err || data);
         if (err) {
           fs.unlinkSync(assetJsonFile);
           resolve(err);
@@ -196,10 +196,14 @@ const initCos = async () => {
     };
 
     // 获取 map 数据
-    if (result.statusCode === 200 && !isForce) {
-      console.log(fs.readFileSync(assetJsonFile, {encoding: 'utf-8'}));
-      console.log(JSON.parse(fs.readFileSync(assetJsonFile, {encoding: 'utf-8'})));
-      assetJsonMap.mapv2 = require(assetJsonFile).mapv2 || {};
+    try {
+      if (result.statusCode === 200 && !isForce) {
+        assetJsonMap.mapv2 = require(assetJsonFile).mapv2 || {};
+      }
+    }
+    catch (e) {
+      core.error(e.stack);
+      assetJsonMap.mapv2 = {};
     }
 
     if (typeof skipFiles === 'string') {
@@ -358,8 +362,14 @@ const initCloudBase = async () => {
   }
 
   // 获取 map 数据
-  if (fs.existsSync(assetJsonFile) && !isForce) {
-    assetJsonMap.mapv2 = require(assetJsonFile).mapv2 || {};
+  try {
+    if (fs.existsSync(assetJsonFile) && !isForce) {
+      assetJsonMap.mapv2 = require(assetJsonFile).mapv2 || {};
+    }
+  }
+  catch (e) {
+    core.error(e.stack);
+    assetJsonMap.mapv2 = {};
   }
 
   if (typeof skipFiles === 'string') {
