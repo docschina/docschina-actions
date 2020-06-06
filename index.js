@@ -197,6 +197,8 @@ const initCos = async () => {
 
     // 获取 map 数据
     if (result.statusCode === 200 && !isForce) {
+      console.log(fs.readFileSync(assetJsonFile, {encoding: 'utf-8'}));
+      console.log(JSON.parse(fs.readFileSync(assetJsonFile, {encoding: 'utf-8'})));
       assetJsonMap.mapv2 = require(assetJsonFile).mapv2 || {};
     }
 
