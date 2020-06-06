@@ -260,7 +260,8 @@ const initCos = async () => {
 
           incrementalFiles.push(file);
         } else {
-          result && core.debug(result);
+          console.log(result);
+          // result && core.debug(result);
         }
       });
 
