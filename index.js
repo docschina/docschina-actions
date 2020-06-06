@@ -203,6 +203,7 @@ const initCos = async () => {
     if (typeof skipFiles === 'string') {
       skipFiles = JSON.parse(skipFiles);
     }
+    core.debug(`skipFiles: ${skipFiles}`);
 
     let codePath = path.join(workspace, staticSrcPath);
     core.debug(`codePath: ${codePath}`);
@@ -235,6 +236,7 @@ const initCos = async () => {
       uploadActions.push({ uploadOption });
     });
 
+    core.debug(`====start uploading===`);
     // 开始上传文件
     let incrementalFiles = [];
 
@@ -266,9 +268,11 @@ const initCos = async () => {
         'deployResult',
         'success: ' + JSON.stringify(incrementalFiles)
       );
+
+      core.debug(`====finish uploading===`);
     } catch (e) {
       logTimeResult(`${e.Key}-${e.statusCode}-${e.Code}`, 'error');
-      core.error(e.message);
+      core.error(e.stack);
       core.setFailed(e.message);
     }
 
@@ -285,7 +289,7 @@ const initCos = async () => {
     //   fs.unlinkSync(assetJsonFile);
     // }
   } catch (e) {
-    core.error(e.stacks);
+    core.error(e.stack);
     core.setFailed(e.message);
   }
 };
