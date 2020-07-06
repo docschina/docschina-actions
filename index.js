@@ -199,6 +199,16 @@ const initCos = async () => {
     // 获取 map 数据
     try {
       if (result.statusCode === 200 && !isForce) {
+        console.log(
+          'assetJsonFile: ',
+          fs.readFileSync(assetJsonFile, { encoding: 'utf-8' })
+        );
+
+        // console.log(
+        //   JSON.parse(
+        //     fs.readFileSync(assetJsonFile, { encoding: 'utf-8' }).trim()
+        //   )
+        // );
         assetJsonMap.mapv2 = fs.readJSONSync(assetJsonFile).mapv2 || {};
       }
     } catch (e) {
