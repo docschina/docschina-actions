@@ -59,8 +59,9 @@ const getObject = async () => {
         Output: fs.createWriteStream(assetJsonFile),
       },
       function (err, data) {
-        console.log(err || data);
+        // console.log(err || data);
         if (err) {
+          console.log(err);
           fs.unlinkSync(assetJsonFile);
           resolve(err);
         } else {
@@ -198,10 +199,9 @@ const initCos = async () => {
     // 获取 map 数据
     try {
       if (result.statusCode === 200 && !isForce) {
-        assetJsonMap.mapv2 = require(assetJsonFile).mapv2 || {};
+        assetJsonMap.mapv2 = fs.readJSONSync(assetJsonFile).mapv2 || {};
       }
-    }
-    catch (e) {
+    } catch (e) {
       core.error(e.stack);
       assetJsonMap.mapv2 = {};
     }
@@ -366,8 +366,7 @@ const initCloudBase = async () => {
     if (fs.existsSync(assetJsonFile) && !isForce) {
       assetJsonMap.mapv2 = require(assetJsonFile).mapv2 || {};
     }
-  }
-  catch (e) {
+  } catch (e) {
     core.error(e.stack);
     assetJsonMap.mapv2 = {};
   }
