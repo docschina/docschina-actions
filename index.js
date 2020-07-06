@@ -4,6 +4,7 @@ const crypto = require('crypto');
 const glob = require('glob');
 const moment = require('moment');
 const chalk = require('chalk');
+const axios = require('axios');
 const core = require('@actions/core');
 const asyncPool = require('tiny-async-pool');
 const COS = require('cos-nodejs-sdk-v5');
@@ -65,6 +66,7 @@ const getObject = async () => {
           fs.unlinkSync(assetJsonFile);
           resolve(err);
         } else {
+          console.log(data);
           resolve(data);
         }
       }
@@ -191,26 +193,22 @@ const filterFilesByCondition = ({
 
 const initCos = async () => {
   try {
-    let result = await getObject();
+    // let result = await getObject();
     let assetJsonMap = {
       mapv2: {},
     };
 
+    console.log();
+
     // 获取 map 数据
     try {
-      if (result.statusCode === 200 && !isForce) {
-        console.log(
-          'assetJsonFile: ',
-          fs.readFileSync(assetJsonFile, { encoding: 'utf-8' })
-        );
-
-        // console.log(
-        //   JSON.parse(
-        //     fs.readFileSync(assetJsonFile, { encoding: 'utf-8' }).trim()
-        //   )
-        // );
-        assetJsonMap.mapv2 = fs.readJSONSync(assetJsonFile).mapv2 || {};
-      }
+      let result = await axios.get(
+        `http://${bucket}.cos.${region}.myqcloud.com/${assetFileName}`
+      );
+      // if (result.statusCode === 200 && !isForce) {
+      //   assetJsonMap.mapv2 = fs.readJSONSync(assetJsonFile).mapv2 || {};
+      // }
+      assetJsonMap.mapv2 = result.data.mapv2 || {};
     } catch (e) {
       core.error(e.stack);
       assetJsonMap.mapv2 = {};
