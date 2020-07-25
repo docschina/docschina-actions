@@ -34,6 +34,10 @@ inputs:
     description: "跳过不上传的文件或目录"
     required: false
     default: ""
+  isForce:
+    description: "是否强制上传所有文件及目录"
+    required: false
+    default: ""
 outputs:
   deployResult:
     description: "部署结果"
