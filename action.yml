@@ -1,46 +1,50 @@
-name: "Docschina Github Action"
-description: "印记中文部署"
+name: 'Docschina Github Action'
+description: '印记中文部署'
 author: lcxfs1991
 branding:
   icon: cloud
   color: red
 inputs:
   secretId:
-    description: "腾讯云 secretId"
+    description: '腾讯云 secretId'
     required: true
   secretKey:
-    description: "腾讯云 secretKey"
+    description: '腾讯云 secretKey'
     required: true
   envId:
-    description: "云开发环境 Id"
+    description: '云开发环境 Id'
     required: false
   staticSrcPath:
-    description: "静态资源:本地路径"
+    description: '静态资源:本地路径'
     required: true
     default: build
   staticDestPath:
-    description: "静态资源:云端路径"
+    description: '静态资源:云端路径'
     required: false
-    default: ""
+    default: ''
   bucket:
-    description: "COS Bucket"
+    description: 'COS Bucket'
     required: false
-    default: ""
+    default: ''
   region:
-    description: "COS Region"
+    description: 'COS Region'
     required: false
-    default: ""
+    default: ''
   skipFiles:
-    description: "跳过不上传的文件或目录"
+    description: '跳过不上传的文件或目录'
     required: false
-    default: ""
+    default: ''
   isForce:
-    description: "是否强制上传所有文件及目录"
+    description: '是否强制上传所有文件及目录'
     required: false
-    default: ""
+    default: ''
+  forceFiles:
+    description: '是否强制上传所有文件及目录'
+    required: false
+    default: ''
 outputs:
   deployResult:
-    description: "部署结果"
+    description: '部署结果'
 runs:
-  using: "node12"
-  main: "./index.js"
+  using: 'node12'
+  main: './index.js'

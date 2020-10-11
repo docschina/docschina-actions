@@ -19,6 +19,7 @@ let bucket = core.getInput('bucket');
 let region = core.getInput('region');
 let isForce = core.getInput('isForce') || false;
 let skipFiles = core.getInput('skipFiles') || [];
+let forceFiles = core.getInput('forceFiles') || [];
 let assetFileName = core.getInput('assetFileName') || 'docschina-assets.json';
 let workspace = process.env.GITHUB_WORKSPACE;
 
@@ -33,6 +34,7 @@ if (!process.env.CI) {
   region = config.region;
   isForce = config.isForce;
   skipFiles = config.skipFiles;
+  forceFiles = config.forceFiles;
   workspace = __dirname;
 }
 
@@ -151,6 +153,7 @@ const sliceUploadFile = function (options) {
 const filterFilesByCondition = ({
   scanFiles,
   skipFiles,
+  forceFiles,
   codePath,
   assetJsonMap,
 }) => {
@@ -159,6 +162,13 @@ const filterFilesByCondition = ({
     for (let i = 0, len = skipFiles.length; i < len; i++) {
       if (file.indexOf(skipFiles[i]) === 0) {
         return false;
+      }
+    }
+
+    // 手动设置强制上传的文件
+    for (let i = 0, len = forceFiles.length; i < len; i++) {
+      if (file.indexOf(forceFiles[i]) === 0) {
+        return true;
       }
     }
 
@@ -219,6 +229,11 @@ const initCos = async () => {
     }
     core.debug(`skipFiles: ${skipFiles}`);
 
+    if (typeof forceFiles === 'string') {
+      forceFiles = JSON.parse(forceFiles);
+    }
+    core.debug(`forceFiles: ${forceFiles}`);
+
     let codePath = path.join(workspace, staticSrcPath);
     core.debug(`codePath: ${codePath}`);
 
@@ -231,6 +246,7 @@ const initCos = async () => {
     let files = filterFilesByCondition({
       scanFiles,
       skipFiles,
+      forceFiles,
       codePath,
       assetJsonMap,
     });
@@ -396,6 +412,7 @@ const initCloudBase = async () => {
   let files = filterFilesByCondition({
     scanFiles,
     skipFiles,
+    forceFiles,
     codePath,
     assetJsonMap,
   });
