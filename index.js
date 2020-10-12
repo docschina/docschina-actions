@@ -400,6 +400,11 @@ const initCloudBase = async () => {
   }
   core.debug(`skipFiles: ${skipFiles}`);
 
+  if (typeof forceFiles === 'string') {
+    forceFiles = JSON.parse(forceFiles);
+  }
+  core.debug(`forceFiles: ${forceFiles}`);
+
   let codePath = path.join(workspace, staticSrcPath);
   core.debug(`codePath: ${codePath}`);
 
