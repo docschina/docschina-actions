@@ -70,6 +70,7 @@
           isForce: ${{ secrets.ISFORCE }}
           envId: ${{ secrets.ENV_ID }}
           forceFiles: ${{ secrets.FORCE_FILES }}
+          skipFiles: ${{ secrets.SKIP_FILES }}
   - name: Get Deployment Result
       run: echo "Deploy to docschina result ${{ steps.docschinaDeploy.outputs.deployResult }}"
 ```
