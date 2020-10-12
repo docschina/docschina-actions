@@ -39,7 +39,7 @@ inputs:
     required: false
     default: ''
   forceFiles:
-    description: '是否强制上传所有文件及目录'
+    description: '强掉上传的文件及目录'
     required: false
     default: ''
 outputs:
