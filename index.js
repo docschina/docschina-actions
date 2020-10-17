@@ -158,17 +158,21 @@ const filterFilesByCondition = ({
   assetJsonMap,
 }) => {
   let filterFiles = scanFiles.filter((file) => {
-    // 手动设置跳过的文件
-    for (let i = 0, len = skipFiles.length; i < len; i++) {
-      if (file.indexOf(skipFiles[i]) === 0) {
-        return false;
+    if (Array.isArray(skipFiles)) {
+      // 手动设置跳过的文件
+      for (let i = 0, len = skipFiles.length; i < len; i++) {
+        if (file.indexOf(skipFiles[i]) === 0) {
+          return false;
+        }
       }
     }
 
-    // 手动设置强制上传的文件
-    for (let i = 0, len = forceFiles.length; i < len; i++) {
-      if (file.indexOf(forceFiles[i]) === 0) {
-        return true;
+    if (Array.isArray(forceFiles)) {
+      // 手动设置强制上传的文件
+      for (let i = 0, len = forceFiles.length; i < len; i++) {
+        if (file.indexOf(forceFiles[i]) === 0) {
+          return true;
+        }
       }
     }
 
@@ -434,7 +438,7 @@ const initCloudBase = async () => {
   let incrementalFiles = [];
 
   try {
-    await asyncPool(10, uploadActions, deployHostingFile);
+    await asyncPool(5, uploadActions, deployHostingFile);
     files.forEach((file) => {
       if (path.extname(file) !== '.html') {
         assetJsonMap.mapv2[file] = 1;
