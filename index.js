@@ -279,7 +279,7 @@ const initCos = async () => {
       let info = await asyncPool(10, uploadActions, sliceUploadFileLimit);
 
       info.forEach((result) => {
-        if (!result.code && result.data) {
+        if (!result.code && result.data && result.data.Location) {
           let item = result.data;
           logTimeResult(`${item.Location}-${item.statusCode}`);
           let splitResult = item.Location.split('/');
