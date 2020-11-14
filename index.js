@@ -305,7 +305,7 @@ const initCos = async () => {
 
       core.debug(`====finish uploading===`);
     } catch (e) {
-      logTimeResult(`${e.Key}-${e.statusCode}-${e.Code}`, 'error');
+      e && logTimeResult(`${e.Key}-${e.statusCode}-${e.Code}`, 'error');
       core.error(e.stack);
       core.setFailed(e.message);
     }
