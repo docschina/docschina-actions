@@ -279,7 +279,7 @@ const initCos = async () => {
       let info = await asyncPool(10, uploadActions, sliceUploadFileLimit);
 
       info.forEach((result) => {
-        if (!result.code) {
+        if (!result.code && result.data) {
           let item = result.data;
           logTimeResult(`${item.Location}-${item.statusCode}`);
           let splitResult = item.Location.split('/');
@@ -305,7 +305,7 @@ const initCos = async () => {
 
       core.debug(`====finish uploading===`);
     } catch (e) {
-      e && logTimeResult(`${e.Key}-${e.statusCode}-${e.Code}`, 'error');
+      logTimeResult(`${e.Key}-${e.statusCode}-${e.Code}`, 'error');
       core.error(e.stack);
       core.setFailed(e.message);
     }
