@@ -15,7 +15,7 @@
     "@cloudbase/cli": "^0.7.0",
     "axios": "^0.19.2",
     "chalk": "^4.0.0",
-    "cos-nodejs-sdk-v5": "^2.5.20",
+    "cos-nodejs-sdk-v5": "^2.8.3",
     "fs-extra": "^9.0.0",
     "glob": "^7.1.6",
     "moment": "^2.24.0",
