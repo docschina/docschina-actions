@@ -294,7 +294,7 @@ const initCos = async () => {
 
           incrementalFiles.push(file);
         } else {
-          result.data && core.debug(result.data);
+          result && result.data && console.log(result.data);
         }
       });
 
