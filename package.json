@@ -1,6 +1,6 @@
 {
   "name": "docschina-actions",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "description": "",
   "main": "index.js",
   "scripts": {
@@ -12,7 +12,7 @@
   "license": "ISC",
   "dependencies": {
     "@actions/core": "^1.2.3",
-    "@cloudbase/cli": "0.7.0",
+    "@cloudbase/manager-node": "^3.9.3",
     "axios": "^0.21.2",
     "chalk": "^4.0.0",
     "cos-nodejs-sdk-v5": "^2.8.3",

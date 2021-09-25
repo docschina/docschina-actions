@@ -8,7 +8,7 @@ const axios = require('axios');
 const core = require('@actions/core');
 const asyncPool = require('tiny-async-pool');
 const COS = require('cos-nodejs-sdk-v5');
-const Client = require('@cloudbase/cli');
+const CloudBase = require('@cloudbase/manager-node')
 
 let secretId = core.getInput('secretId');
 let secretKey = core.getInput('secretKey');
@@ -161,7 +161,7 @@ const filterFilesByCondition = ({
     if (Array.isArray(skipFiles)) {
       // 手动设置跳过的文件
       for (let i = 0, len = skipFiles.length; i < len; i++) {
-        if (file.indexOf(skipFiles[i]) === 0) {
+        if (skipFiles[i] !== '' && file.indexOf(skipFiles[i]) === 0) {
           return false;
         }
       }
@@ -170,7 +170,7 @@ const filterFilesByCondition = ({
     if (Array.isArray(forceFiles)) {
       // 手动设置强制上传的文件
       for (let i = 0, len = forceFiles.length; i < len; i++) {
-        if (file.indexOf(forceFiles[i]) === 0) {
+        if (forceFiles[i] !== '' && file.indexOf(forceFiles[i]) === 0) {
           return true;
         }
       }
@@ -198,9 +198,9 @@ const filterFilesByCondition = ({
       return false;
     }
 
+
     return true;
   });
-
   // 将 html 文件放到最后再上传
   return appendHtmlFiles(filterFiles);
 };
@@ -211,8 +211,6 @@ const initCos = async () => {
     let assetJsonMap = {
       mapv2: {},
     };
-
-    console.log();
 
     // 获取 map 数据
     try {
@@ -254,6 +252,7 @@ const initCos = async () => {
       codePath,
       assetJsonMap,
     });
+    console.log('======files====:', files);
 
     let uploadActions = [];
     files.forEach((file) => {
@@ -334,57 +333,40 @@ const initCos = async () => {
  *
  */
 
-const storageService = null;
-
-async function getMangerServiceInstance() {
-  if (!storageService) {
-    const { getMangerService } = require('@cloudbase/cli/lib/utils');
-    const { storage } = await getMangerService(envId);
-    return storage;
-  }
-  return storageService;
-}
-
 const deployHostingFile = (param) => {
-  const hosting = require('@cloudbase/cli/lib/commands/hosting/hosting');
-
-  return hosting.deploy(
-    {
-      envId: param.envId,
-    },
-    param.filePath, // srcpath
-    param.key // cloudPath
-  );
+  return param.cloudbase.hosting.uploadFiles({
+    localPath: param.filePath, // srcpath
+    cloudPath: param.key // cloudPath
+  });
 };
 
-async function downloadStorageFile(localPath, cloudPath) {
-  let storage = await getMangerServiceInstance();
-  return storage.downloadFile({
+async function downloadStorageFile(cloudbase, localPath, cloudPath) {
+  return cloudbase.storage.downloadFile({
     cloudPath,
     localPath,
   });
 }
 
-async function uploadStorageFile(localPath, cloudPath) {
-  let storage = await getMangerServiceInstance();
-  return storage.uploadFile({
+async function uploadStorageFile(cloudbase, localPath, cloudPath) {
+  return cloudbase.storage.uploadFile({
     localPath,
     cloudPath,
-    function() {
-      console, log(1);
-    },
   });
 }
 
 const initCloudBase = async () => {
-  new Client(secretId, secretKey);
+  const cloudbase = CloudBase.init({
+    secretId,
+    secretKey,
+    envId // 云环境 ID，可在腾讯云-云开发控制台获取
+  })
 
   let assetJsonMap = {
     mapv2: {},
   };
 
   try {
-    await downloadStorageFile(assetJsonFile, assetFileName);
+    let result = await downloadStorageFile(cloudbase, assetJsonFile, assetFileName);
   } catch (e) {
     core.error(e.message);
   }
@@ -426,19 +408,19 @@ const initCloudBase = async () => {
     assetJsonMap,
   });
 
-  let uploadActions = [];
+  let uploadFiles = [];
   files.forEach((file) => {
     let filePath = path.join(codePath, file);
     let key = staticDestPath ? path.join(staticDestPath, file) : file;
 
-    uploadActions.push({ filePath, key, envId });
+    uploadFiles.push({ cloudbase, filePath, key });
   });
 
   // 开始上传文件
   let incrementalFiles = [];
 
   try {
-    await asyncPool(5, uploadActions, deployHostingFile);
+    let result = await asyncPool(5, uploadFiles, deployHostingFile);
     files.forEach((file) => {
       if (path.extname(file) !== '.html') {
         assetJsonMap.mapv2[file] = 1;
@@ -458,7 +440,7 @@ const initCloudBase = async () => {
 
   fs.writeFileSync(assetJsonFile, JSON.stringify(assetJsonMap, 4, null));
 
-  await uploadStorageFile(assetJsonFile, assetFileName);
+  await uploadStorageFile(cloudbase, assetJsonFile, assetFileName);
 
   if (fs.existsSync(assetJsonFile)) {
     fs.unlinkSync(assetJsonFile);
